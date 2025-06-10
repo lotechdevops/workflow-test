@@ -1,0 +1,101 @@
+name: 🚀 Meu Primeiro Workflow
+
+# Quando executar este workflow
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:  # Permite execução manual
+
+# Definição dos jobs
+jobs:
+  # Job 1: Informações básicas
+  info:
+    name: "📋 Informações do Repositório"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "📥 Fazer checkout do código"
+        uses: actions/checkout@v4
+        
+      - name: "ℹ️ Mostrar informações do workflow"
+        run: |
+          echo "🏠 Repositório: ${{ github.repository }}"
+          echo "🌿 Branch: ${{ github.ref_name }}"
+          echo "👤 Autor: ${{ github.actor }}"
+          echo "📅 Data: $(date)"
+          echo "🖥️ Runner: $(uname -a)"
+          
+      - name: "📂 Listar arquivos do repositório"
+        run: |
+          echo "📁 Estrutura do repositório:"
+          ls -la
+          echo ""
+          echo "📁 Conteúdo da pasta .github:"
+          ls -la .github/ || echo "Pasta .github não existe"
+          echo ""
+          echo "📁 Workflows disponíveis:"
+          ls -la .github/workflows/ || echo "Pasta workflows não existe"
+
+  # Job 2: Teste simples (executa em paralelo com 'info')
+  teste:
+    name: "🧪 Testes Básicos"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "📥 Checkout do código"
+        uses: actions/checkout@v4
+        
+      - name: "✅ Verificar se README existe"
+        run: |
+          if [ -f "README.md" ]; then
+            echo "✅ README.md encontrado!"
+            echo "📄 Conteúdo do README:"
+            cat README.md
+          else
+            echo "❌ README.md não encontrado"
+            exit 1
+          fi
+          
+      - name: "🔍 Verificar estrutura do projeto"
+        run: |
+          echo "🔍 Verificando estrutura necessária..."
+          
+          # Verificar se pasta .github existe
+          if [ -d ".github" ]; then
+            echo "✅ Pasta .github existe"
+          else
+            echo "❌ Pasta .github não existe"
+          fi
+          
+          # Verificar se pasta workflows existe
+          if [ -d ".github/workflows" ]; then
+            echo "✅ Pasta .github/workflows existe"
+            echo "📝 Workflows encontrados:"
+            ls -la .github/workflows/
+          else
+            echo "❌ Pasta .github/workflows não existe"
+          fi
+          
+  # Job 3: Notificação (executa após os outros terminarem)
+  notificacao:
+    name: "📢 Finalização"
+    runs-on: ubuntu-latest
+    needs: [info, teste]  # Aguarda os jobs anteriores terminarem
+    if: always()  # Executa mesmo se outros jobs falharem
+    
+    steps:
+      - name: "🎉 Workflow concluído"
+        run: |
+          echo "🎊 Parabéns! Seu primeiro workflow foi executado com sucesso!"
+          echo ""
+          echo "📊 Status dos jobs anteriores:"
+          echo "   📋 Info: ${{ needs.info.result }}"
+          echo "   🧪 Teste: ${{ needs.teste.result }}"
+          echo ""
+          if [ "${{ needs.info.result }}" = "success" ] && [ "${{ needs.teste.result }}" = "success" ]; then
+            echo "✅ Todos os jobs foram bem-sucedidos!"
+          else
+            echo "⚠️ Alguns jobs apresentaram problemas."
+          fi

@@ -99,3 +99,39 @@ jobs:
           else
             echo "⚠️ Alguns jobs apresentaram problemas."
           fi
+
+  # Job 4: Experimento com diferentes sistemas operacionais
+  multi-os:
+    name: "🖥️ Teste Multi-OS"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - name: "📥 Checkout"
+        uses: actions/checkout@v4
+        
+      - name: "🖥️ Mostrar informações do sistema"
+        run: |
+          echo "🖥️ Sistema operacional: ${{ runner.os }}"
+          echo "📍 Arquitetura: ${{ runner.arch }}"
+          
+      - name: "🐧 Comandos específicos do Linux"
+        if: runner.os == 'Linux'
+        run: |
+          echo "🐧 Executando no Linux!"
+          uname -a
+          lscpu | head -5
+          
+      - name: "🪟 Comandos específicos do Windows"
+        if: runner.os == 'Windows'
+        run: |
+          echo "🪟 Executando no Windows!"
+          systeminfo | findstr "OS Name"
+          
+      - name: "🍎 Comandos específicos do macOS"
+        if: runner.os == 'macOS'
+        run: |
+          echo "🍎 Executando no macOS!"
+          sw_vers

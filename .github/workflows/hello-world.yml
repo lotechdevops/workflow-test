@@ -3,9 +3,9 @@ name: 🚀 Meu Primeiro Workflow
 # Quando executar este workflow
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:  # Permite execução manual
 
 # Definição dos jobs

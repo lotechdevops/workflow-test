@@ -1,0 +1,65 @@
+name: 🛒 Actions do Marketplace - Simples
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Mensagem para testar'
+        required: true
+        default: 'Olá GitHub Actions!'
+
+jobs:
+  marketplace-basics:
+    name: "📦 Actions Essenciais"
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. CHECKOUT - A mais importante
+      - name: "📥 Baixar código"
+        uses: actions/checkout@v4
+        
+      # 2. SETUP NODE - Para projetos JavaScript
+      - name: "🟢 Configurar Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      # 3. CACHE - Acelerar builds
+      - name: "⚡ Cache de dependências"
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          
+      # 4. CREATE ISSUE - Criar issue automaticamente
+      - name: "📋 Criar issue"
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🤖 Issue criada pelo Actions',
+              body: `
+              ## Teste de Actions
+              
+              **Mensagem:** ${{ github.event.inputs.message }}
+              **Executado por:** ${{ github.actor }}
+              **Data:** ${new Date().toISOString()}
+              
+              Esta issue foi criada automaticamente! 🎉
+              `
+            });
+            
+      # 5. UPLOAD ARTIFACT - Salvar arquivos
+      - name: "📄 Criar arquivo de log"
+        run: |
+          echo "Log do workflow - $(date)" > workflow.log
+          echo "Usuário: ${{ github.actor }}" >> workflow.log
+          echo "Mensagem: ${{ github.event.inputs.message }}" >> workflow.log
+          
+      - name: "📤 Upload do arquivo"
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-logs
+          path: workflow.log

@@ -1,4 +1,4 @@
-name: 🛒 Actions do Marketplace - Simples
+name: 🛒 Actions Marketplace - Versão Segura
 
 on:
   workflow_dispatch:
@@ -8,58 +8,118 @@ on:
         required: true
         default: 'Olá GitHub Actions!'
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
-  marketplace-basics:
-    name: "📦 Actions Essenciais"
+  marketplace-safe:
+    name: "📦 Actions Essenciais (Sem Issues)"
     runs-on: ubuntu-latest
     
     steps:
-      # 1. CHECKOUT - A mais importante
+      # 1. CHECKOUT
       - name: "📥 Baixar código"
         uses: actions/checkout@v4
         
-      # 2. SETUP NODE - Para projetos JavaScript
+      # 2. SETUP NODE
       - name: "🟢 Configurar Node.js"
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           
-      # 3. CACHE - Acelerar builds
-      - name: "⚡ Cache de dependências"
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          
-      # 4. CREATE ISSUE - Criar issue automaticamente
-      - name: "📋 Criar issue"
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: '🤖 Issue criada pelo Actions',
-              body: `
-              ## Teste de Actions
-              
-              **Mensagem:** ${{ github.event.inputs.message }}
-              **Executado por:** ${{ github.actor }}
-              **Data:** ${new Date().toISOString()}
-              
-              Esta issue foi criada automaticamente! 🎉
-              `
-            });
-            
-      # 5. UPLOAD ARTIFACT - Salvar arquivos
-      - name: "📄 Criar arquivo de log"
+      # 3. INFORMAÇÕES DO CONTEXTO
+      - name: "ℹ️ Mostrar informações"
         run: |
-          echo "Log do workflow - $(date)" > workflow.log
-          echo "Usuário: ${{ github.actor }}" >> workflow.log
-          echo "Mensagem: ${{ github.event.inputs.message }}" >> workflow.log
+          echo "🎯 Mensagem recebida: ${{ github.event.inputs.message }}"
+          echo "👤 Executado por: ${{ github.actor }}"
+          echo "📅 Data: $(date)"
+          echo "🌿 Branch: ${{ github.ref_name }}"
+          echo "🏷️ Repo: ${{ github.repository }}"
           
-      - name: "📤 Upload do arquivo"
+      # 4. CRIAR ARQUIVO SIMPLES
+      - name: "📄 Criar relatório"
+        run: |
+          cat > relatorio.md << EOF
+          # 📊 Relatório do GitHub Actions
+          
+          ## Informações da Execução
+          - **Mensagem:** ${{ github.event.inputs.message }}
+          - **Usuário:** ${{ github.actor }}
+          - **Data:** $(date)
+          - **Workflow:** ${{ github.workflow }}
+          - **Repository:** ${{ github.repository }}
+          - **Run ID:** ${{ github.run_id }}
+          
+          ## Sistema
+          - **OS:** ${{ runner.os }}
+          - **Arquitetura:** ${{ runner.arch }}
+          
+          ## Status
+          ✅ Workflow executado com sucesso!
+          EOF
+          
+          echo "📄 Relatório criado:"
+          cat relatorio.md
+          
+      # 5. UPLOAD ARTIFACT
+      - name: "📤 Upload do relatório"
         uses: actions/upload-artifact@v4
         with:
-          name: workflow-logs
-          path: workflow.log
+          name: relatorio-execution
+          path: relatorio.md
+          
+      # 6. CACHE DEMONSTRATION
+      - name: "⚡ Demonstração de Cache"
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            ~/.cache
+          key: ${{ runner.os }}-cache-${{ hashFiles('**/package*.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cache-
+            
+      # 7. MULTIPLE COMMANDS
+      - name: "🔧 Comandos múltiplos"
+        run: |
+          echo "🚀 Executando vários comandos..."
+          
+          echo "1️⃣ Verificando versões:"
+          node --version
+          npm --version
+          
+          echo "2️⃣ Informações do sistema:"
+          whoami
+          pwd
+          ls -la
+          
+          echo "3️⃣ Variáveis importantes:"
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+          echo "GITHUB_ACTOR: $GITHUB_ACTOR"
+          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+          
+          echo "✅ Todos os comandos executados!"
+          
+      # 8. CONDITIONAL STEP
+      - name: "🎯 Step condicional"
+        if: github.event.inputs.message == 'especial'
+        run: |
+          echo "🌟 Você digitou a mensagem especial!"
+          echo "🎉 Este step só executa quando message = 'especial'"
+          
+      # 9. STEP SUMMARY
+      - name: "📊 Resumo final"
+        run: |
+          echo "## 🎉 Execução Concluída!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📋 Detalhes:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mensagem:** ${{ github.event.inputs.message }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Executor:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Data:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ✅ Sucesso" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📁 Artefatos Gerados:" >> $GITHUB_STEP_SUMMARY
+          echo "- relatorio-execution.md" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🚀 **Próximo passo:** Baixe o artefato para ver o relatório completo!"

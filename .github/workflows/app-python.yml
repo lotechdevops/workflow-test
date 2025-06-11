@@ -16,9 +16,15 @@ jobs:
         run: python --version
       - name: "Falar com você"
         run: echo "Olá, ${{ github.event.inputs.name }}! Bem-vindo ao GitHub Actions."
-      - name: "Step Secreto"
+      - name: "🎉 Step Secreto"
         if: github.event.inputs.name == 'especial'
-        run: echo "Parabéns! Você descobriu o step secreto!"
+        run: echo "🎉 Parabéns! Você descobriu o step secreto!"
+      - name: "🚀 Super Secreto"
+        if: github.event.inputs.name == 'super'
+        run: echo "🚀 Wow! Nível super alcançado!"
+      - name: "👑 Mestre secreto!"
+        if: github.event.inputs.name == 'mestre'
+        run: echo "👑 Você é o mestre dos GitHub Actions!"
   sistema:
     needs: info
     runs-on: ubuntu-latest

@@ -7,10 +7,10 @@ jobs:
     steps:
       - name: "Mostrar Mensagem"
         run: echo "Olá! Este é um workflow de exemplo para Python."
-
       - name: "Exibir Versão do Python"
         run: python --version
   sistema:
+    needs: info
     runs-on: ubuntu-latest
     steps:
       - name: "Sistema Operacional"

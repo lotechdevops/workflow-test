@@ -1,6 +1,11 @@
 name: App Python
 on:
   workflow_dispatch:
+    inputs:
+      name:
+        description: "Digite seu nome"
+        required: true
+        default: "Desenvolvedor"
 jobs:
   info:
     runs-on: ubuntu-latest

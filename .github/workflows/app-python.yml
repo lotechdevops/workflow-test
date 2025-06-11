@@ -34,6 +34,18 @@ jobs:
           echo "Dados recebidos do step anterior:"
           echo "Usuário: ${{ steps.saudacao.outputs.usuario }}"
           echo "Data: ${{ steps.saudacao.outputs.data }}"
+      - name: "📄 Criar relatório"
+        run: |
+          echo "=== RELATÓRIO DO WORKFLOW ===" > relatorio.txt
+          echo "Usuário: ${{ github.event.inputs.name }}" >> relatorio.txt
+          echo "Data: $(date)" >> relatorio.txt
+          echo "Sistema: $(uname -a)" >> relatorio.txt
+          echo "Workflow executado com sucesso!" >> relatorio.txt
+      - name: "📤 Salvar relatório"
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-workflow
+          path: relatorio.txt
   sistema:
     needs: info
     runs-on: ubuntu-latest

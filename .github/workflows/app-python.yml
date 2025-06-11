@@ -14,6 +14,8 @@ jobs:
         run: echo "Olá! Este é um workflow de exemplo para Python."
       - name: "Exibir Versão do Python"
         run: python --version
+      - name: "Falar com você"
+        run: echo "Olá, ${{ github.event.inputs.name }}! Bem-vindo ao GitHub Actions."
   sistema:
     needs: info
     runs-on: ubuntu-latest

@@ -82,3 +82,26 @@ jobs:
         run: |
           echo "Testando Python ${{ matrix.python-version }}"
           python --version
+  deploy-dev:
+    if: github.event.inputs.ambiente == 'development'
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: "Deploy Development"
+        run: |
+          echo "Fazendo deploy em DEVELOPMENT"
+          echo "Usuário: ${{ github.event.inputs.name }}"
+          echo "URL: https://dev.meuapp.com"
+          echo "Deploy DEV concluído!"
+  deploy-prod:
+    if: github.event.inputs.ambiente == 'Production'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: "Deploy Production"
+        run: |
+          echo "ATENÇÃO: Deploy em PRODUÇÃO!"
+          echo "Usuário: ${{ github.event.inputs.name }}"
+          echo "URL: https://meuapp.com"
+          echo "Este deploy precisa de aprovação!"
+          echo "Deploy PROD concluído!"

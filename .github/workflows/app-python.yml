@@ -6,6 +6,13 @@ on:
         description: "Digite seu nome"
         required: true
         default: "Desenvolvedor"
+      ambiente:
+        description: "Escolha o ambiente"
+        required: true
+        type: choice
+        options:
+          - "development"
+          - "Production"
 jobs:
   info:
     runs-on: ubuntu-latest

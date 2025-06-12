@@ -52,3 +52,12 @@ jobs:
     steps:
       - name: "Sistema Operacional"
         run: uname -a
+      - name: "📥 Baixar relatório"
+        uses: actions/download-artifact@v4
+        with:
+          name: relatorio-workflow
+      - name: "📖 Ler relatório"
+        run: |
+          echo "=== CONTEÚDO DO RELATÓRIO ==="
+          cat relatorio.txt
+          echo "=== FIM DO RELATÓRIO ==="
